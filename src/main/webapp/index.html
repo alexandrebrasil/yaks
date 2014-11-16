@@ -1,0 +1,27 @@
+<html ng-app="yaks">
+	<head>
+		<script type="text/javascript" src="js/angular/angular.js"></script>
+
+		<script type="text/javascript" src="js/yaks.js"></script>
+		<script type="text/javascript" src="js/boards.js"></script>
+		
+		<link rel="stylesheet" href="css/yaks.css" />
+	</head>
+	<body ng-controller="MainController">
+		<div id="sideMenu">
+			<div id="logo">Logo goes here</div>
+			My boards: <br/>
+			<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect">
+			</select>
+		</div>
+		
+		<div id="content">
+			<div id="boardHeader">{{selectedBoard.name}}</div>
+			<div class="lanes">
+				<div ng-repeat="lane in selectedBoard.lanes" class="lane">
+					<div class="laneHeader">{{lane.name}}</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
