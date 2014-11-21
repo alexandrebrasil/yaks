@@ -17,11 +17,36 @@
 		
 		<div id="content">
 			<div id="boardHeader">{{selectedBoard.name}}</div>
-			<div class="lanes">
-				<div ng-repeat="lane in selectedBoard.lanes" class="lane">
-					<div class="laneHeader">{{lane.name}}</div>
+			<div>
+				<div ng-repeat="lane in selectedBoard.lanes" class="laneHeader" >
+					{{lane.name}}
+					<div class="smallRoundButton" ng-click="addCard(lane)" title="Adds a new card to '{{lane.name}}'">+</div>
 				</div>
 			</div>
+			<div>
+				<div ng-repeat="lane in selectedBoard.lanes" class="lane">
+					<div ng-repeat="card in lane.cards" class="card">
+						<div class="cardTitle" title="{{card.name}}">
+							{{card.name}}
+						</div>
+						<div class="cardDescription">{{card.description}}</div>
+						<div style="background: white; height: 5px; width: 100%; position: absolute; left:0; bottom: 0"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="blockScreen" ng-show="showNewCard">
+		</div>
+		<div id="newCard" ng-show="showNewCard">
+			<form novalidate name="newCardForm">
+				<div style="position: relative">
+					<input type="text" placeholder="Card name" class="newCardTitle" ng-model="newCardName" required/>
+					<div class="smallRoundButton" title="Create card" ng-click="saveCard()">&#10003;</div>
+				</div>
+				
+				<textarea class="newCardText" ng-model="newCardText" placeholder="Describe your card" required></textarea>
+			</form>
 		</div>
 	</body>
 </html>
