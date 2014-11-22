@@ -154,14 +154,22 @@ div#boardHeader {
 	
 }
 
-.smallRoundButton {
-	padding: 0px;
-	width: 15px;
-	height: 15px;
-	line-height: 15px;
+.rightCornerButtonBar {
+	position: absolute;
+	right: 1px;
+	top: 50%;
 	-ms-transform: translate(0px, -50%); /* IE 9 */
     -webkit-transform: translate(0px, -50%); /* Chrome, Safari, Opera */
     transform: translate(0px, -50%);
+}
+
+.smallRoundButton {
+	float: right;
+	display: inline-block;
+	padding: 0px;
+	width: 17px;
+	height: 17px;
+	line-height: 17px;
     color: white;
     font-weight: bold;
     background: #4288bb;
@@ -169,11 +177,9 @@ div#boardHeader {
     border-radius: 100%;
  	text-shadow: 2px 2px 4px #222222;
     box-shadow: 2px 2px 4px #222222;
-	position: absolute;
-	right: 5px;
-	top: 50%;
 	vertical-align: middle;
 	text-align: center;
+	margin-right: 5px;
 }
 
 .smallRoundButton:hover {

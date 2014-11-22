@@ -4,6 +4,7 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', function($s
 	$scope.boards = Boards.list();
 	$scope.selectedBoard = $scope.boards[0];
 	$scope.showNewCard = false;
+	$scope.showEditCard = false;
 	$scope.newCardName = "";
 	$scope.newCardText = "";
 	
@@ -23,7 +24,10 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', function($s
 						description: $scope.newCardText
 				   }
 		Boards.addCard($scope.selectedLane, card);
-		
+		reset();
+	}
+	
+	function reset() {
 		$scope.showNewCard = false;
 		$scope.newCardName = '';
 		$scope.newCardText = '';
@@ -31,4 +35,12 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', function($s
 		$scope.newCardForm.$setUntouched(true);
 	}
 	
+	$scope.cancelNewCard = function() {
+		reset();
+	}
+	
+	$scope.editCard = function(card) {
+		$scope.selectedCard = card;
+		$scope.showEditCard = true;
+	}
 }]);
