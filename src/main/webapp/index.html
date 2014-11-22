@@ -27,7 +27,7 @@
 			</div>
 			<div>
 				<div ng-repeat="lane in selectedBoard.lanes" class="lane">
-					<div ng-repeat="card in lane.cards" class="card" ng-dblclick="editCard(card)">
+					<div ng-repeat="card in lane.cards" class="card" ng-dblclick="editCard(lane, $index)">
 						<div class="cardTitle" title="{{card.name}}">
 							{{card.name}}
 						</div>
@@ -38,20 +38,7 @@
 			</div>
 		</div>
 		
-		<div class="blockScreen" ng-show="showNewCard || showEditCard">
-		</div>
-		<div id="newCard" ng-show="showNewCard">
-			<form novalidate name="newCardForm">
-				<div style="position: relative">
-					<input type="text" placeholder="Card name" class="newCardTitle" ng-model="newCardName" required/>
-					<div class="rightCornerButtonBar">
-						<div class="smallRoundButton" title="Cancel" ng-click="cancelNewCard()"><div style="position: relative; top: -2px; left: -1px">&#10007;</div></div>
-						<div class="smallRoundButton" title="Create card" ng-click="saveCard()">&#10003;</div>
-					</div>
-				</div>
-				
-				<textarea class="newCardText" ng-model="newCardText" placeholder="Describe your card" required></textarea>
-			</form>
+		<div class="blockScreen" ng-show="showEditCard">
 		</div>
 
 		<div id="newCard" ng-show="showEditCard">
@@ -59,7 +46,8 @@
 				<div style="position: relative">
 					<input type="text" placeholder="Card name" class="newCardTitle" ng-model="selectedCard.name" required/>
 					<div class="rightCornerButtonBar">
-						<div class="smallRoundButton" title="Finish" ng-click="showEditCard = false">&#10003;</div>
+						<div class="smallRoundButton" title="Delete card" ng-click="deleteSelectedCard()">-</div>
+						<div class="smallRoundButton" title="Finish" ng-click="saveCard()">&#10003;</div>
 					</div>
 				</div>
 				

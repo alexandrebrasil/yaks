@@ -35,7 +35,7 @@ boardsModule.service('Boards', [function() {
 		return boards;
 	}
 	
-	this.addCard = function(lane, card) {
-		lane.cards.push(card);
+	this.saveCard = function(board, lane, card) {
+//		lane.cards.push(card);
 	}
 }])
