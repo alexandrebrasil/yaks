@@ -1,0 +1,34 @@
+<div id="content">
+	<div id="boardHeader">{{board.name}}</div>
+	<div>
+		<div ng-repeat="lane in board.lanes" class="laneHeader">
+			{{lane.name}}
+			<div class="rightCornerButtonBar">
+				<div class="smallRoundButton" ng-click="addCard($index)" title="Adds a new card to '{{lane.name}}'">+</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		
+		<div ng-repeat="lane in board.lanes" class="lane" yk-card-drop-target lane-index="$index" ng-transclude>
+			<yk-card ng-repeat="card in lane.cards" card="card" lane-index="$parent.$index" card-index="$index"></yk-card>
+		</div>
+	</div>
+</div>
+
+<div class="blockScreen" ng-show="showEditCard">
+</div>
+
+<div id="newCard" ng-show="showEditCard">
+	<form novalidate name="editCardForm">
+		<div style="position: relative">
+			<input type="text" placeholder="Card name" class="newCardTitle" ng-model="selectedCard.name" required/>
+			<div class="rightCornerButtonBar">
+				<div class="smallRoundButton" title="Delete card" ng-click="deleteSelectedCard()">-</div>
+				<div class="smallRoundButton" title="Finish" ng-click="saveCard()">&#10003;</div>
+			</div>
+		</div>
+		
+		<textarea class="newCardText" ng-model="selectedCard.description" placeholder="Describe your card" required></textarea>
+	</form>
+</div>

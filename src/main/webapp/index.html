@@ -15,44 +15,6 @@
 			</select>
 		</div>
 		
-		<div id="content">
-			<div id="boardHeader">{{selectedBoard.name}}</div>
-			<div>
-				<div ng-repeat="lane in selectedBoard.lanes" class="laneHeader" >
-					{{lane.name}}
-					<div class="rightCornerButtonBar">
-						<div class="smallRoundButton" ng-click="addCard(lane)" title="Adds a new card to '{{lane.name}}'">+</div>
-					</div>
-				</div>
-			</div>
-			<div>
-				<div ng-repeat="lane in selectedBoard.lanes" class="lane">
-					<div ng-repeat="card in lane.cards" class="card" ng-dblclick="editCard(lane, $index)">
-						<div class="cardTitle" title="{{card.name}}">
-							{{card.name}}
-						</div>
-						<div class="cardDescription">{{card.description}}</div>
-						<div style="background: white; height: 5px; width: 100%; position: absolute; left:0; bottom: 0"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="blockScreen" ng-show="showEditCard">
-		</div>
-
-		<div id="newCard" ng-show="showEditCard">
-			<form novalidate name="editCardForm">
-				<div style="position: relative">
-					<input type="text" placeholder="Card name" class="newCardTitle" ng-model="selectedCard.name" required/>
-					<div class="rightCornerButtonBar">
-						<div class="smallRoundButton" title="Delete card" ng-click="deleteSelectedCard()">-</div>
-						<div class="smallRoundButton" title="Finish" ng-click="saveCard()">&#10003;</div>
-					</div>
-				</div>
-				
-				<textarea class="newCardText" ng-model="selectedCard.description" placeholder="Describe your card" required></textarea>
-			</form>
-		</div>
+		<yk-board board="selectedBoard"></yk-board>
 	</body>
 </html>

@@ -35,6 +35,10 @@ boardsModule.service('Boards', [function() {
 		return boards;
 	}
 	
+	this.moveCard = function(board, fromLaneIndex, toLaneIndex, cardIndex) {
+		var card = board.lanes[fromLaneIndex].cards.splice(cardIndex, 1)[0];
+		board.lanes[toLaneIndex].cards.push(card);
+	}
 	this.saveCard = function(board, lane, card) {
 //		lane.cards.push(card);
 	}
