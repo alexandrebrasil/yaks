@@ -17,7 +17,7 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 			$scope.showEditCard = false;
 			$scope.newCardName = "";
 			$scope.newCardText = "";
-			
+
 			function editCard(laneIndex, cardIndex) {
 				$scope.selectedLane = $scope.board.lanes[laneIndex];
 				$scope.selectedCard = $scope.selectedLane.cards[cardIndex];
@@ -33,29 +33,30 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 
 			this.setDraggedCard = function(laneIndex, cardIndex) {
 				$scope.dragOrigin = {
-					laneIndex: laneIndex,	
+					laneIndex: laneIndex,
 					cardIndex: cardIndex
 				};
 			}
-			
-			$scope.addCard = function(lane) {
+
+			$scope.addCard = function(laneIndex) {
 				$scope.selectedCard = {name: '', description: ''};
+				var lane = $scope.board.lanes[laneIndex];
 				lane.cards.push($scope.selectedCard);
-				editCard(lane, lane.cards.length - 1);
+				editCard(laneIndex, lane.cards.length - 1);
 			}
-			
+
 			$scope.saveCard = function() {
 				if($scope.selectedCard.name == null || $scope.selectedCard.name.trim().length == 0 || $scope.selectedCard.description == null || $scope.selectedCard.description.trim().length == 0) {
 					$window.alert("Please inform the card name and a starting text before proceeding.");
 					return;
 				}
-				
+
 				$scope.selectedCard = null;
 				$scope.showEditCard = false;
 				$scope.editCardForm.$setPristine(true);
 				$scope.editCardForm.$setUntouched(true);
 			}
-			
+
 			$scope.deleteSelectedCard = function() {
 				if($window.confirm('Are you sure you want to remove this card?')) {
 					$scope.selectedLane.cards.splice($scope.selectedIndex, 1);
@@ -85,7 +86,7 @@ yaksApp.directive('ykCardDropTarget', [function() {
 			});
 		},
 
-	}	
+	}
 }]);
 
 yaksApp.directive('ykCard', [function(){
@@ -110,3 +111,42 @@ yaksApp.directive('ykCard', [function(){
 		}
 	}
 }]);
+
+yaksApp.directive('editInPlace', function() {
+	return {
+			restrict: 'E',
+			scope: {
+				value: "="
+			},
+			template: '<span ng-bind="value" ng-dblclick="edit()"></span><input type="text" ng-model="value"></input>',
+			link: function($scope, element, attrs) {
+				var spanElement = angular.element(element.children()[0]);
+				var inputElement = angular.element(element.children()[1]);
+				inputElement.css("display", "none");
+				inputElement.css({
+					borderRadius: "15px",
+					height: "30px",
+					fontSize: "1.1rem",
+					verticalAlign: "middle",
+					padding: "2px 10px",
+					zIndex: "10"
+				});
+
+				$scope.edit = function() {
+					inputElement.css("display", "inline-block");
+					spanElement.css("display", "none");
+					inputElement[0].focus();
+				}
+
+				inputElement.on('blur', function(e) {
+					if(inputElement.val().trim() == '') {
+						inputElement.css("border-color", "red");
+						inputElement[0].focus();
+					} else {
+						inputElement.css("display", "none");
+						spanElement.css("display", "inline-block");
+					}
+				});
+			}
+	}
+});
