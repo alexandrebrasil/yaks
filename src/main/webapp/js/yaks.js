@@ -118,7 +118,7 @@ yaksApp.directive('editInPlace', function() {
 			scope: {
 				value: "="
 			},
-			template: '<span ng-bind="value" ng-dblclick="edit()"></span><input type="text" ng-model="value"></input>',
+			template: '<span ng-bind="value" title="Double click to edit" ng-dblclick="edit()"></span><input type="text" ng-model="value"></input>',
 			link: function($scope, element, attrs) {
 				var spanElement = angular.element(element.children()[0]);
 				var inputElement = angular.element(element.children()[1]);

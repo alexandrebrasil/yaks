@@ -1,5 +1,7 @@
 <div id="content">
-	<div id="boardHeader">{{board.name}}</div>
+	<div id="boardHeader">
+		<edit-in-place value="board.name"> </edit-in-place>
+	</div>
 	<div>
 		<div ng-repeat="lane in board.lanes" class="laneHeader">
 			<edit-in-place value="lane.name"></edit-in-place>
