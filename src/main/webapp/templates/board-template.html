@@ -1,5 +1,8 @@
 <div id="content">
 	<div id="boardHeader">
+		<div class="rightCornerButtonBar">
+			<div class="smallRoundButton" ng-click="newLane()" title="Adds a new lane to '{{board.name}}' board">+</div>
+		</div>
 		<edit-in-place value="board.name"> </edit-in-place>
 	</div>
 	<div>
@@ -32,5 +35,18 @@
 		</div>
 
 		<textarea class="newCardText" ng-model="selectedCard.description" placeholder="Describe your card" required></textarea>
+	</form>
+</div>
+
+<div id="newLane" ng-show="showNewLaneForm">
+	<form novalidate name="newLaneForm">
+		<div style="position: relative">
+			<div class="header">Add a new lane</div>
+			<div class="rightCornerButtonBar">
+				<div class="smallRoundButton" title="Cancel" ng-click="cancelNewLane()">-</div>
+				<div class="smallRoundButton" title="Add" ng-click="addNewLane()">&#10003;</div>
+			</div>
+		</div>
+		<input type="text" placeholder="Lane name" ng-model="newLaneName" required />
 	</form>
 </div>

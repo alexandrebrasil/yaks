@@ -1,10 +1,12 @@
 <html ng-app="yaks">
 	<head>
-		<script type="text/javascript" src="js/angular/angular.js"></script>
+
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/angular_material/0.6.1/angular-material.min.js"></script>
 
 		<script type="text/javascript" src="js/yaks.js"></script>
 		<script type="text/javascript" src="js/boards.js"></script>
-		
+
 		<link rel="stylesheet" href="css/yaks.css" />
 	</head>
 	<body ng-controller="MainController">
@@ -14,7 +16,7 @@
 			<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect">
 			</select>
 		</div>
-		
+
 		<yk-board board="selectedBoard"></yk-board>
 	</body>
 </html>

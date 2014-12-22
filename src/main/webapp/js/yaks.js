@@ -15,6 +15,8 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 
 		controller: ['$scope', 'Boards', '$window', function($scope, Boards, $window) {
 			$scope.showEditCard = false;
+			$scope.showNewLaneForm = false;
+			$scope.newLaneName = "";
 			$scope.newCardName = "";
 			$scope.newCardText = "";
 
@@ -23,6 +25,29 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 				$scope.selectedCard = $scope.selectedLane.cards[cardIndex];
 				$scope.selectedIndex = cardIndex;
 				$scope.showEditCard = true;
+			}
+
+			$scope.newLane = function() {
+				$scope.showNewLaneForm = true;
+			}
+
+			$scope.cancelNewLane = function() {
+				$scope.showNewLaneForm = false;
+				$scope.newLaneName = "";
+			}
+
+			$scope.addNewLane = function() {
+				if($scope.newLaneName  == null || $scope.newLaneName.trim().length == 0) {
+					$window.alert("Please inform the lane name before proceeding.");
+					return;
+				}
+
+				Boards.addNewLane($scope.board, $scope.newLaneName);
+
+				$scope.showNewLaneForm = false;
+				$scope.newLaneName = "";
+				$scope.editCardForm.$setPristine(true);
+				$scope.editCardForm.$setUntouched(true);
 			}
 
 			this.editCard = editCard;
