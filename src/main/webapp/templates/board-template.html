@@ -6,7 +6,7 @@
 		<edit-in-place value="board.name"> </edit-in-place>
 	</div>
 	<div>
-		<div ng-repeat="lane in board.lanes" class="laneHeader">
+		<div ng-repeat="lane in board.lanes" class="laneHeader" yk-lane-drag-drop lane-index="$index" ng-transclude>
 			<edit-in-place value="lane.name"></edit-in-place>
 			<div class="rightCornerButtonBar">
 				<div class="smallRoundButton" ng-click="addCard($index)" title="Adds a new card to '{{lane.name}}'">+</div>

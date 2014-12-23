@@ -22,11 +22,11 @@ boardsModule.service('Boards', [function() {
 					{
 						name: 'Cervejas',
 						lanes: [
-						    {name: 'Receitas', cards: [{name: 'Bittervet', description: 'Malte, ï¿½gua, lï¿½pulo!'},
-						                               {name: 'HoneyWheat', description: 'Malte, malte mel, ï¿½gua, lï¿½pulo.'}]},
-						    {name: 'Fermentaï¿½ï¿½o', cards: []},
-						    {name: 'Maturaï¿½ï¿½o', cards: []},
-						    {name: 'Refermentaï¿½ï¿½o na garrafa', cards: [{name: 'Bittervet', description: 'Meh...'}]},
+							 {name: 'Receitas', cards: [{name: 'Bittervet', description: 'Malte, Água, lúpulo!'},
+							 									 {name: 'HoneyWheat', description: 'Malte, malte mel, Água, lúpulo.'}]},
+						    {name: 'Fermentação', cards: []},
+							 {name: 'Maturação', cards: []},
+							 {name: 'Refermentação na garrafa', cards: [{name: 'Bittervet', description: 'Meh...'}]},
 						    {name: 'Prontas e em estoque', cards: []},
 						    {name: 'Arquivo morto', cards:[]}
 					]}];
@@ -50,5 +50,10 @@ boardsModule.service('Boards', [function() {
 		};
 
 		board.lanes.push(lane);
+	}
+
+	this.moveLane = function(board, fromIndex, toIndex) {
+		var lane = board.lanes.splice(fromIndex, 1)[0];
+		board.lanes.splice(toIndex, 0, lane);
 	}
 }])

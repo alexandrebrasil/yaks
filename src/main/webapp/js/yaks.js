@@ -14,6 +14,11 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 		},
 
 		controller: ['$scope', 'Boards', '$window', function($scope, Boards, $window) {
+			this.dragOrigin = {
+				laneIndex: -1,
+				cardIndex: -1
+			};
+
 			$scope.showEditCard = false;
 			$scope.showNewLaneForm = false;
 			$scope.newLaneName = "";
@@ -53,14 +58,16 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 			this.editCard = editCard;
 
 			this.moveCard = function(toLaneIndex) {
-				Boards.moveCard($scope.board, $scope.dragOrigin.laneIndex, toLaneIndex, $scope.dragOrigin.cardIndex);
+				Boards.moveCard($scope.board, this.dragOrigin.laneIndex, toLaneIndex, this.dragOrigin.cardIndex);
 			}
 
-			this.setDraggedCard = function(laneIndex, cardIndex) {
-				$scope.dragOrigin = {
-					laneIndex: laneIndex,
-					cardIndex: cardIndex
-				};
+			this.moveLane = function(toLaneIndex) {
+				Boards.moveLane($scope.board, this.dragOrigin.laneIndex, toLaneIndex);
+			}
+
+			this.setDragOrigin = function(laneIndex, cardIndex) {
+				this.dragOrigin.laneIndex = laneIndex;
+				this.dragOrigin.cardIndex = cardIndex;
 			}
 
 			$scope.addCard = function(laneIndex) {
@@ -92,6 +99,32 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 	}
 }]);
 
+yaksApp.directive('ykLaneDragDrop', function() {
+	return {
+		restrict: 'A',
+		scope: {
+			laneIndex: "=laneIndex"
+		},
+		transclude: true,
+		require: '^ykBoard',
+		link: function(scope, element, attrs, ykBoard) {
+			attrs.$set('draggable', true);
+			element.on('dragover', function(event) {
+				if(ykBoard.dragOrigin.cardIndex == -1 && ykBoard.dragOrigin.laneIndex != scope.laneIndex)
+					event.preventDefault();
+			});
+			element.on('drop', function(event) {
+				scope.$apply(function() {
+					ykBoard.moveLane(scope.laneIndex);
+				});
+			});
+			element.on('drag', function(event) {
+				ykBoard.setDragOrigin(scope.laneIndex, -1);
+			});
+		},
+	}
+});
+
 yaksApp.directive('ykCardDropTarget', [function() {
 	return {
 		restrict: 'A',
@@ -102,15 +135,15 @@ yaksApp.directive('ykCardDropTarget', [function() {
 		require: '^ykBoard',
 		link: function(scope, element, attrs, ykBoard) {
 			element.on('dragover', function(event) {
-				event.preventDefault();
+				if(ykBoard.dragOrigin.cardIndex >= 0)
+					event.preventDefault();
 			});
 			element.on('drop', function(event) {
 				scope.$apply(function() {
 					ykBoard.moveCard(scope.toLaneIndex);
 				});
 			});
-		},
-
+		}
 	}
 }]);
 
@@ -131,7 +164,7 @@ yaksApp.directive('ykCard', [function(){
 			}
 
 			element.on('drag', function(event) {
-				ykBoard.setDraggedCard(scope.laneIndex, scope.cardIndex);
+				ykBoard.setDragOrigin(scope.laneIndex, scope.cardIndex);
 			});
 		}
 	}
