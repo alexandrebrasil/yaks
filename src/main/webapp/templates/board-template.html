@@ -21,7 +21,7 @@
 	</div>
 </div>
 
-<div class="blockScreen" ng-show="showEditCard">
+<div class="blockScreen" ng-show="showEditCard || showNewLaneForm">
 </div>
 
 <div id="newCard" ng-show="showEditCard">
@@ -43,7 +43,7 @@
 		<div style="position: relative">
 			<div class="header">Add a new lane</div>
 			<div class="rightCornerButtonBar">
-				<div class="smallRoundButton" title="Cancel" ng-click="cancelNewLane()">-</div>
+				<div class="smallRoundButton" title="Cancel" ng-click="cancelNewLane()">x</div>
 				<div class="smallRoundButton" title="Add" ng-click="addNewLane()">&#10003;</div>
 			</div>
 		</div>

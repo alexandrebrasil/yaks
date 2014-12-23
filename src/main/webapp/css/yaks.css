@@ -209,26 +209,31 @@ div#boardHeader {
 #newCard,
 #newLane {
 	position: fixed;
-	top: 50%;
-	left: 50%;
-	-ms-transform: translate(-50%, -50%); /* IE 9 */
-   -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
-   transform: translate(-50%, -50%);
-   opacity: initial;
-   width: 500px;
-   background-color: white;
-   border: 1px solid #4472B9;
+  opacity: initial;
+  width: 500px;
+  background-color: white;
+  border: 1px solid #4472B9;
 	border-radius: 5px;
 	z-index: 6;
 }
 
 #newCard {
 	height: 350px;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%); /* IE 9 */
+	-webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+	transform: translate(-50%, -50%);
 }
 
 #newLane {
 	height: 70px;
 	overflow: hidden;
+	top: 100;
+	left: 50%;
+	-ms-transform: translate(-50%, 0%); /* IE 9 */
+	-webkit-transform: translate(-50%, 0%); /* Chrome, Safari, Opera */
+	transform: translate(-50%, 0%);
 }
 
 .newCardTitle {
