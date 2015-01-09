@@ -4,12 +4,19 @@ boardsModule.factory('boards', ['$resource',
 		return $resource('/boards/:boardId', {boardId: '@id'}, {
 			query: {method: 'GET', isArray:true},
 			get: {method: 'GET', isArray: false},
-			save: {method: 'PUT'}
+			save: {method: 'PUT'},
+			add: {method: 'POST'}
 		});
 	}
 ]);
 
 boardsModule.service('Boards', ['boards', function(boards) {
+	this.addBoard = function(board, callback) {
+		boards.add(board, function(newBoard, responseHeaders) {
+			callback(newBoard);
+		});
+	}
+
 	this.moveCard = function(board, fromLaneIndex, toLaneIndex, cardIndex) {
 		var card = board.lanes[fromLaneIndex].cards.splice(cardIndex, 1)[0];
 		board.lanes[toLaneIndex].cards.push(card);

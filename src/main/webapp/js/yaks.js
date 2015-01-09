@@ -3,7 +3,19 @@ var yaksApp = angular.module('yaks',['boards']);
 yaksApp.controller('MainController', ['$scope', 'Boards', 'boards', '$window', function($scope, Boards, boards, $window) {
 	$scope.boards = boards.query(function(boards){
 		$scope.selectedBoard = boards[0];
-	})
+	});
+
+	$scope.createNewBoard = function() {
+		var newBoard = {
+			name: '<New board>',
+			lanes: [{id: 1, name:'<New lane>'}]
+		}
+
+		Boards.addBoard(newBoard, function(board){
+			$scope.boards.push(board);
+			$scope.selectedBoard = $scope.boards[$scope.boards.length - 1];
+		})
+	}
 }]);
 
 yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {

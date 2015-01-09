@@ -13,9 +13,14 @@
 	<body ng-controller="MainController">
 		<div id="sideMenu">
 			<div id="logo">Logo goes here</div>
-			My boards: <br/>
-			<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect">
-			</select>
+			<div>
+				<div class="rightCornerButtonBar">
+					<div class="smallRoundButton" ng-click="createNewBoard()" title="Create a new, empty board">+</div>
+				</div>
+				My boards: <br/>
+				<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect">
+				</select>
+			</div>
 		</div>
 
 		<yk-board board="selectedBoard"></yk-board>

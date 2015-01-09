@@ -67,8 +67,17 @@ module.exports = function(app) {
       res.send(board);
    })
 
-   app.put('/boards', function(req, res) {
+   app.post('/boards', function(req, res) {
+      var lastId = -1;
+      boards.forEach(function(board) {
+         if(lastId < board.id)
+            lastId = board.id;
+      })
 
+      var board = req.body;
+      board.id = lastId + 1;
+      boards.push(board);
+      res.send(board);
    })
 
    console.log('/boards registered');
