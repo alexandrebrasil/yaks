@@ -4,7 +4,7 @@ boardsModule.factory('boards', ['$resource',
 		return $resource('/boards/:boardId', {boardId: '@id'}, {
 			query: {method: 'GET', isArray:true},
 			get: {method: 'GET', isArray: false},
-			save: {method: 'POST'}
+			save: {method: 'PUT'}
 		});
 	}
 ]);

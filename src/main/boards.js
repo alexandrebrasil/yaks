@@ -54,7 +54,7 @@ module.exports = function(app) {
       }
    })
 
-   app.post('/boards/:id', function(req, res){
+   app.put('/boards/:id', function(req, res){
       console.log('Saving board ' + req.params.id);
       var board = req.body;
 
@@ -65,6 +65,10 @@ module.exports = function(app) {
       }
 
       res.send(board);
+   })
+
+   app.put('/boards', function(req, res) {
+
    })
 
    console.log('/boards registered');
