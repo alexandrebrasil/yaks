@@ -1,8 +1,9 @@
 var yaksApp = angular.module('yaks',['boards']);
 
-yaksApp.controller('MainController', ['$scope', 'Boards', '$window', function($scope, Boards, $window) {
-	$scope.boards = Boards.list();
-	$scope.selectedBoard = $scope.boards[0];
+yaksApp.controller('MainController', ['$scope', 'Boards', 'boards', '$window', function($scope, Boards, boards, $window) {
+	$scope.boards = boards.query(function(boards){
+		$scope.selectedBoard = boards[0];
+	})
 }]);
 
 yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
@@ -34,6 +35,10 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 
 			$scope.newLane = function() {
 				$scope.showNewLaneForm = true;
+			}
+
+			$scope.saveBoard = function() {
+				Boards.saveBoard($scope.board);
 			}
 
 			$scope.cancelNewLane = function() {
@@ -87,12 +92,14 @@ yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
 				$scope.showEditCard = false;
 				$scope.editCardForm.$setPristine(true);
 				$scope.editCardForm.$setUntouched(true);
+				Boards.saveBoard($scope.board);
 			}
 
 			$scope.deleteSelectedCard = function() {
 				if($window.confirm('Are you sure you want to remove this card?')) {
 					$scope.selectedLane.cards.splice($scope.selectedIndex, 1);
 					$scope.showEditCard = false;
+					Boards.saveBoard($scope.board);
 				}
 			}
 		}]
@@ -170,11 +177,12 @@ yaksApp.directive('ykCard', [function(){
 	}
 }]);
 
-yaksApp.directive('editInPlace', function() {
+yaksApp.directive('editInPlace', ['Boards', function(Boards) {
 	return {
 			restrict: 'E',
 			scope: {
-				value: "="
+				value: "=",
+				onChange: "&"
 			},
 			template: '<span ng-bind="value" title="Double click to edit" ng-dblclick="edit()"></span><input type="text" ng-model="value"></input>',
 			link: function($scope, element, attrs) {
@@ -203,8 +211,9 @@ yaksApp.directive('editInPlace', function() {
 					} else {
 						inputElement.css("display", "none");
 						spanElement.css("display", "inline-block");
+						$scope.onChange();
 					}
 				});
 			}
 	}
-});
+}]);

@@ -1,46 +1,23 @@
-var boardsModule = angular.module('boards', []);
-
-boardsModule.service('Boards', [function() {
-	var boards = [
-	              	{
-						name: 'Yaks Development',
-						lanes: [
-							{name: 'Unprioritized', cards:[{name: 'Create card component', description: 'Reusable component to edit a card whenever needed.'}]},
-							{name: 'Pending', cards: []},
-							{name: 'Doing', cards:[{name: 'This card has a huge name that goes on and on and on. For real! No kidding!', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present really long text goes here anytime i want! Anything else?'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-							                       {name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'}]},
-							{name: 'Done', cards: []},
-							{name: 'Deployed', cards: []}
-					]},
-					{
-						name: 'Cervejas',
-						lanes: [
-							 {name: 'Receitas', cards: [{name: 'Bittervet', description: 'Malte, Água, lúpulo!'},
-							 									 {name: 'HoneyWheat', description: 'Malte, malte mel, Água, lúpulo.'}]},
-						    {name: 'Fermentação', cards: []},
-							 {name: 'Maturação', cards: []},
-							 {name: 'Refermentação na garrafa', cards: [{name: 'Bittervet', description: 'Meh...'}]},
-						    {name: 'Prontas e em estoque', cards: []},
-						    {name: 'Arquivo morto', cards:[]}
-					]}];
-
-	this.list = function() {
-		return boards;
+var boardsModule = angular.module('boards', ['ngResource']);
+boardsModule.factory('boards', ['$resource',
+	function($resource) {
+		return $resource('/boards/:boardId', {boardId: '@id'}, {
+			query: {method: 'GET', isArray:true},
+			get: {method: 'GET', isArray: false},
+			save: {method: 'POST'}
+		});
 	}
+]);
 
+boardsModule.service('Boards', ['boards', function(boards) {
 	this.moveCard = function(board, fromLaneIndex, toLaneIndex, cardIndex) {
 		var card = board.lanes[fromLaneIndex].cards.splice(cardIndex, 1)[0];
 		board.lanes[toLaneIndex].cards.push(card);
+		this.saveBoard(board);
 	}
-	this.saveCard = function(board, lane, card) {
-//		lane.cards.push(card);
+
+	this.saveBoard = function(board) {
+		boards.save(board);
 	}
 
 	this.addNewLane = function(board, newLaneName) {
@@ -50,10 +27,12 @@ boardsModule.service('Boards', [function() {
 		};
 
 		board.lanes.push(lane);
+		this.saveBoard(board);
 	}
 
 	this.moveLane = function(board, fromIndex, toIndex) {
 		var lane = board.lanes.splice(fromIndex, 1)[0];
 		board.lanes.splice(toIndex, 0, lane);
+		this.saveBoard(board);
 	}
 }])
