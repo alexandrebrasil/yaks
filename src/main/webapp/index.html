@@ -13,13 +13,11 @@
 	<body ng-controller="MainController">
 		<div id="sideMenu">
 			<div id="logo">Logo goes here</div>
-			<div>
-				<div class="rightCornerButtonBar">
-					<div class="smallRoundButton" ng-click="createNewBoard()" title="Create a new, empty board">+</div>
-				</div>
-				My boards: <br/>
+			<div style="position: relative">
 				<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect">
 				</select>
+				<br/>
+				<div class="roundButton" ng-click="createNewBoard()" title="Create a new, empty board">New board</div>
 			</div>
 		</div>
 

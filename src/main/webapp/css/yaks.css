@@ -172,25 +172,34 @@ div#boardHeader {
 }
 
 .smallRoundButton {
-	float: right;
-	display: inline-block;
-	padding: 0px 1px 1px 0px;
 	width: 17px;
+	margin-right: 5px;
+	font-size: 17px;
+	padding: 0px 1px 1px 0px;
+	border-radius: 100%;
+}
+
+.roundButton {
+	padding: 5px 10px;
+	border-radius: 17px;
+}
+
+.roundButton,
+.smallRoundButton {
+	display: inline-block;
 	height: 17px;
 	line-height: 17px;
  	color: white;
    font-weight: bold;
    background: #4288bb;
    border: 1px solid white;
-   border-radius: 100%;
  	text-shadow: 2px 2px 4px #222222;
    box-shadow: 2px 2px 4px #222222;
 	vertical-align: middle;
 	text-align: center;
-	margin-right: 5px;
-	font-size: 17px;
 }
 
+.roundButton:hover,
 .smallRoundButton:hover {
 	cursor: pointer;
 }
