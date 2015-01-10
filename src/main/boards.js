@@ -1,83 +1,79 @@
-// Temporary repository
-var boards = [{
-         id: 1,
-         name: 'Yaks Development',
-         lanes: [
-               {id: 1, name: 'Unprioritized', cards:[{id: 1, name: 'Create card component', description: 'Reusable component to edit a card whenever needed.'}]},
-               {id: 2, name: 'Pending', cards: []},
-               {id: 3, name: 'Doing', cards:[{id: 1, name: 'This card has a huge name that goes on and on and on. For real! No kidding!', description: 'Add cards to each lane when they are present.'},
-               {id: 4, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-               {id: 5, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-               {id: 6, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present really long text goes here anytime i want! Anything else?'},
-               {id: 7, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-               {id: 8, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-               {id: 9, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-               {id: 10, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'},
-               {id: 11, name: 'Add cards to lanes', description: 'Add cards to each lane when they are present.'}]},
-               {id: 12, name: 'Done', cards: []},
-               {id: 13, name: 'Deployed', cards: []}]
-        },
-        {
-           id: 2,
-           name: 'Cervejas',
-           lanes: [
-               {id: 1, name: 'Receitas', cards: [{id: 1, name: 'Bittervet', description: 'Malte, água, lúpulo!'},
-               {id: 2, name: 'HoneyWheat', description: 'Malte, malte mel, água, lúpulo.'}]},
-               {id: 3, name: 'Fermentação', cards: []},
-               {id: 4, name: 'Maturação', cards: []},
-               {id: 5, name: 'Refermentação na garrafa', cards: [{id: 1, name: 'Bittervet', description: 'Meh...'}]},
-               {id: 6, name: 'Prontas e em estoque', cards: []},
-               {id: 7, name: 'Arquivo morto', cards:[]}]
-    }];
-
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/yaks');
+var Schema = mongoose.Schema;
+var CardSchema = new Schema({
+   name: {type: String, required: true},
+   description: {type: String, required: true}
+});
+
+var LaneSchema = new Schema({
+   name: {type: String, required: true},
+   cards: [CardSchema]
+});
+
+var BoardSchema = new Schema({
+   name: {type: String, required: true},
+   lanes: [LaneSchema]
+});
+
+var Board = mongoose.model('board', BoardSchema);
 
 module.exports = function(app) {
    app.use(bodyParser.json());
 
    app.get('/boards/:id?', function(req, res){
       if(typeof req.params.id === 'undefined') {
-         res.send(boards);
-      } else {
-         found = false;
-         for(i in boards) {
-            if(boards[i].id == req.params.id) {
-               res.send(boards[i]);
-               found = true;
-               break;
+         Board.find(function(err, boards) {
+            if(err) {
+               console.log("Error recovering boards");
+               res.status(500);
+            } else {
+               res.send(boards);
             }
-         }
-
-         if(! found) {
-            res.send({});
-         }
+         })
+      } else {
+         Board.find({_id: req.params.id}, function(err, board) {
+            if(err) {
+               console.log("Error finding board " + req.params.id);
+               res.status(500);
+            } else if(board) {
+               res.send(board);
+            } else {
+               res.status(404);
+            }
+         });
       }
    })
 
    app.put('/boards/:id', function(req, res){
       console.log('Saving board ' + req.params.id);
       var board = req.body;
-
-      for(i = 0; i < boards.length; i++) {
-         if(boards[i].id == board.id) {
-            boards.splice(i, 1, board);
+      Board.update({_id: board._id}, board, function (err, numberAffected, raw){
+         if(err) {
+            console.log('Error saving board');
+         } else if(numberAffected == 0) {
+            console.log('No board was saved');
+         } else {
+            console.log('Board saved')
          }
-      }
+      });
 
       res.send(board);
    })
 
    app.post('/boards', function(req, res) {
-      var lastId = -1;
-      boards.forEach(function(board) {
-         if(lastId < board.id)
-            lastId = board.id;
-      })
-
-      var board = req.body;
-      board.id = lastId + 1;
-      boards.push(board);
-      res.send(board);
+      Board.create({
+         name: req.body.name,
+         lanes: req.body.lanes
+      }, function(err, board) {
+         if(err) {
+            res.status(500);
+         } else {
+            res.send(board);
+         }
+      });
    })
 
    console.log('/boards registered');

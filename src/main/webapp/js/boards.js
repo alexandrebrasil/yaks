@@ -1,7 +1,7 @@
 var boardsModule = angular.module('boards', ['ngResource']);
 boardsModule.factory('boards', ['$resource',
 	function($resource) {
-		return $resource('/boards/:boardId', {boardId: '@id'}, {
+		return $resource('/boards/:boardId', {boardId: '@_id'}, {
 			query: {method: 'GET', isArray:true},
 			get: {method: 'GET', isArray: false},
 			save: {method: 'PUT'},
