@@ -1,0 +1,17 @@
+<md-dialog style="width: 50%">
+	<md-content layout="column" layout-align="center center">
+      <md-input-container class="md-hue-1" style="width: 100%">
+         <label>Card name</label>
+         <input ng-model="card.name" style="text-align: center" required></input>
+      </md-input-container>
+		<md-input-container style="width: 100%">
+			<label>Description</label>
+			<textarea ng-model="card.description" required></textarea>
+		</md-input-container>
+	</md-content>
+	<div class="md-actions">
+      <md-button ng-click="cancel()">Discard changes</md-button>
+      <md-button ng-click="save()">Save</md-button>
+      <md-button ng-click="delete()">Delete</md-button>
+	</div>
+</md-dialog>

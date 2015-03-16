@@ -11,6 +11,10 @@ boardsModule.factory('boards', ['$resource',
 ]);
 
 boardsModule.service('Boards', ['boards', function(boards) {
+	this.getBoards = function(callback) {
+		return boards.query(callback);
+	}
+	
 	this.addBoard = function(board, callback) {
 		boards.add(board, function(newBoard, responseHeaders) {
 			callback(newBoard);

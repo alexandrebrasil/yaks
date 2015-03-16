@@ -1,26 +1,60 @@
 <html ng-app="yaks">
 	<head>
-
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-resource.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/angular_material/0.6.1/angular-material.min.js"></script>
+		<script src="bower_components/hammerjs/hammer.js"></script>
+		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/angular-animate/angular-animate.js"></script>
+		<script src="bower_components/angular-aria/angular-aria.js"></script>
+		<script src="bower_components/angular-material/angular-material.js"></script>
+		<script src="bower_components/angular-resource/angular-resource.js"></script>
 
 		<script type="text/javascript" src="js/yaks.js"></script>
 		<script type="text/javascript" src="js/boards.js"></script>
 
+		<link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
 		<link rel="stylesheet" href="css/yaks.css" />
 	</head>
-	<body ng-controller="MainController">
-		<div id="sideMenu">
-			<div id="logo">Logo goes here</div>
-			<div style="position: relative">
-				<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect">
-				</select>
-				<br/>
-				<div class="roundButton" ng-click="createNewBoard()" title="Create a new, empty board">New board</div>
+	<body ng-controller="MainController" layout="column">
+		<md-toolbar class="md-primary" layout="row" layout-align="space-around center">
+			<div style="width: 140px; font-size: 30px; padding-left: 20px">YAKS</div>
+			<div flex>
+				<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect"> </select>
+				<md-button class="md-hue-2" ng-click="createNewBoard()" title="Create a new, empty board">New board</md-button>
+				<md-button class="md-hue-2" ng-click="addNewLane()" title="Add a new lane to this board">New lane</md-button>
+				<md-button class="md-hue-2" ng-click="addNewCard()" title="Add a new card to the first lane">New card</md-button>
 			</div>
-		</div>
+		</md-toolbar>
+		<md-content flex layout="column">
+			<md-toolbar class="md-hue-1 md-tall" layout="column" layout-align="space-between center">
+				<edit-in-place id="boardName" flex label="Board name" value="selectedBoard.name" on-change="saveBoard()"> </edit-in-place>
 
-		<yk-board board="selectedBoard"></yk-board>
+				<div layout="row" layout-align="space-around center" flex style="width: 100%">
+					<div flex ng-repeat="lane in selectedBoard.lanes" yk-lane-drag-drop on-drop="moveLane($index)" lane-index="$index" ng-transclude style="display: inline-block">
+						<edit-in-place value="lane.name" label="Lane name" on-change="saveBoard()"></edit-in-place>
+					</div>
+				</div>
+			</md-toolbar>
+
+			<div flex layout-align="space-around start" layout="row">
+				<div flex layout-fill ng-repeat="lane in selectedBoard.lanes" class="lane" yk-card-drop-target on-drop="moveCard($index)" ng-transclude>
+					<md-card ng-repeat="card in lane.cards" draggable="true" yk-card lane-index="$parent.$index" card-index="$index" ng-dblclick="editCard($event, $parent.$index, $index)">
+						<md-toolbar style="height: 25px; min-height: 35px" class="md-hue-1" layout="row" layout-align="center center">{{card.name}}</md-toolbar>
+						<md-card-content>{{card.description}}</md-card-content>
+					</md-card>
+				</div>
+			</div>
+		</md-content>
+
+		<div id="newLane" ng-show="showNewLaneForm">
+			<form novalidate name="newLaneForm">
+				<div style="position: relative">
+					<div class="header">Add a new lane</div>
+					<div class="rightCornerButtonBar">
+						<div class="smallRoundButton" title="Cancel" ng-click="cancelNewLane()">x</div>
+						<div class="smallRoundButton" title="Add" ng-click="addNewLane()">&#10003;</div>
+					</div>
+				</div>
+				<input type="text" placeholder="Lane name" ng-model="newLaneName" required />
+			</form>
+		</div>
 	</body>
 </html>

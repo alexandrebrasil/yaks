@@ -1,7 +1,39 @@
-var yaksApp = angular.module('yaks',['boards']);
+var yaksApp = angular.module('yaks',['boards', 'ngMaterial']);
 
-yaksApp.controller('MainController', ['$scope', 'Boards', 'boards', '$window', function($scope, Boards, boards, $window) {
-	$scope.boards = boards.query(function(boards){
+yaksApp.config(function($mdThemingProvider) {
+	$mdThemingProvider.theme('default')
+		.primaryPalette('indigo')
+		.accentPalette('blue');
+});
+
+yaksApp.value('dragOrigin', {cardIndex: -1, laneIndex: -1});
+
+yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog', 'dragOrigin', function($scope, Boards, $window, $mdDialog, dragOrigin) {
+	function deleteSelectedCard() {
+		$scope.selectedLane.cards.splice($scope.selectedIndex, 1);
+		Boards.saveBoard($scope.selectedBoard);
+	}
+
+	$scope.moveCard = function(toLaneIndex) {
+		Boards.moveCard($scope.selectedBoard, dragOrigin.laneIndex, toLaneIndex, dragOrigin.cardIndex);
+	}
+
+	$scope.moveLane = function(toLaneIndex) {
+		Boards.moveLane($scope.selectedBoard, dragOrigin.laneIndex, toLaneIndex);
+	}
+
+	function saveCard() {
+		if($scope.selectedCard.name == null || $scope.selectedCard.name.trim().length == 0
+			|| $scope.selectedCard.description == null || $scope.selectedCard.description.trim().length == 0) {
+				$window.alert("Please inform the card name and a starting text before proceeding.");
+				return;
+			}
+
+			$scope.selectedCard = null;
+			Boards.saveBoard($scope.selectedBoard);
+		}
+
+		$scope.boards = Boards.getBoards(function(boards){
 		$scope.selectedBoard = boards[0];
 	});
 
@@ -16,174 +48,132 @@ yaksApp.controller('MainController', ['$scope', 'Boards', 'boards', '$window', f
 			$scope.selectedBoard = $scope.boards[$scope.boards.length - 1];
 		})
 	}
-}]);
 
-yaksApp.directive('ykBoard', ['$window', 'Boards', function($window, Boards) {
-	return {
-		restrict: 'E',
-		templateUrl: 'templates/board-template.html',
-		scope: {
-			board: '=board'
-		},
+	$scope.editCard = function(event, laneIndex, cardIndex) {
+		$scope.selectedLane = $scope.selectedBoard.lanes[laneIndex];
+		$scope.selectedCard = $scope.selectedLane.cards[cardIndex];
+		$scope.selectedIndex = cardIndex;
 
-		controller: ['$scope', 'Boards', '$window', function($scope, Boards, $window) {
-			this.dragOrigin = {
-				laneIndex: -1,
-				cardIndex: -1
-			};
-
-			$scope.showEditCard = false;
-			$scope.showNewLaneForm = false;
-			$scope.newLaneName = "";
-			$scope.newCardName = "";
-			$scope.newCardText = "";
-
-			function editCard(laneIndex, cardIndex) {
-				$scope.selectedLane = $scope.board.lanes[laneIndex];
-				$scope.selectedCard = $scope.selectedLane.cards[cardIndex];
-				$scope.selectedIndex = cardIndex;
-				$scope.showEditCard = true;
-			}
-
-			$scope.newLane = function() {
-				$scope.showNewLaneForm = true;
-			}
-
-			$scope.saveBoard = function() {
-				Boards.saveBoard($scope.board);
-			}
-
-			$scope.cancelNewLane = function() {
-				$scope.showNewLaneForm = false;
-				$scope.newLaneName = "";
-			}
-
-			$scope.addNewLane = function() {
-				if($scope.newLaneName  == null || $scope.newLaneName.trim().length == 0) {
-					$window.alert("Please inform the lane name before proceeding.");
-					return;
+		$mdDialog.show({
+			targetEvent: event,
+			templateUrl: 'templates/card-dialog-template.html',
+			clickOutsideToClose: false,
+			locals: {
+				card: $scope.selectedCard
+			},
+			controller: function (scope, $mdDialog, card) {
+				scope.card = {name: card.name, description: card.description};
+				scope.save = function() {
+					$mdDialog.hide();
+					card.name = scope.card.name;
+					card.description = scope.card.description;
+					// TODO: save the card on the backend
 				}
 
-				Boards.addNewLane($scope.board, $scope.newLaneName);
-
-				$scope.showNewLaneForm = false;
-				$scope.newLaneName = "";
-				$scope.editCardForm.$setPristine(true);
-				$scope.editCardForm.$setUntouched(true);
-			}
-
-			this.editCard = editCard;
-
-			this.moveCard = function(toLaneIndex) {
-				Boards.moveCard($scope.board, this.dragOrigin.laneIndex, toLaneIndex, this.dragOrigin.cardIndex);
-			}
-
-			this.moveLane = function(toLaneIndex) {
-				Boards.moveLane($scope.board, this.dragOrigin.laneIndex, toLaneIndex);
-			}
-
-			this.setDragOrigin = function(laneIndex, cardIndex) {
-				this.dragOrigin.laneIndex = laneIndex;
-				this.dragOrigin.cardIndex = cardIndex;
-			}
-
-			$scope.addCard = function(laneIndex) {
-				$scope.selectedCard = {name: '', description: ''};
-				var lane = $scope.board.lanes[laneIndex];
-				lane.cards.push($scope.selectedCard);
-				editCard(laneIndex, lane.cards.length - 1);
-			}
-
-			$scope.saveCard = function() {
-				if($scope.selectedCard.name == null || $scope.selectedCard.name.trim().length == 0 || $scope.selectedCard.description == null || $scope.selectedCard.description.trim().length == 0) {
-					$window.alert("Please inform the card name and a starting text before proceeding.");
-					return;
+				scope.cancel = function() {
+					$mdDialog.cancel();
 				}
 
-				$scope.selectedCard = null;
-				$scope.showEditCard = false;
-				$scope.editCardForm.$setPristine(true);
-				$scope.editCardForm.$setUntouched(true);
-				Boards.saveBoard($scope.board);
-			}
-
-			$scope.deleteSelectedCard = function() {
-				if($window.confirm('Are you sure you want to remove this card?')) {
-					$scope.selectedLane.cards.splice($scope.selectedIndex, 1);
-					$scope.showEditCard = false;
-					Boards.saveBoard($scope.board);
+				scope.delete = function() {
+					var confirmDlg = $mdDialog.confirm();
+					confirmDlg.title('Delete card')
+								 .content('Are you sure you want to remove the card \'' + card.name + '\'? This can\'t be undone.')
+								 .ariaLabel('Confirm card deletion')
+								 .ok('Yes')
+								 .cancel('No')
+								 .theme('default');
+					$mdDialog.show(confirmDlg).then(deleteSelectedCard);
 				}
 			}
-		}]
+		}).then(
+			function() {
+				//FIXME: save the card, not the board
+				$scope.saveBoard();
+			});
+	}
+
+	$scope.addNewCard = function(event) {
+		$scope.selectedCard = {name: 'New card', description: 'Card description'};
+		var lane = $scope.selectedBoard.lanes[0];
+		lane.cards.push($scope.selectedCard);
+		$scope.editCard(event, 0, lane.cards.length - 1);
+		//TODO: if card edition gets cancelled we should drop the new card from lane
+	}
+
+	$scope.saveBoard = function() {
+		//FIXME: called from edit-in-place when lane or board title changes. Should call specific functions instead of saving entire board.
+		Boards.saveBoard($scope.selectedBoard);
+	}
+
+	$scope.addNewLane = function() {
+		Boards.addNewLane($scope.selectedBoard, '<New lane>');
 	}
 }]);
 
-yaksApp.directive('ykLaneDragDrop', function() {
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//                               DIRECTIVES
+//
+///////////////////////////////////////////////////////////////////////////////
+
+yaksApp.directive('ykLaneDragDrop', ["dragOrigin", function(dragOrigin) {
 	return {
 		restrict: 'A',
 		scope: {
-			laneIndex: "=laneIndex"
+			laneIndex: "=laneIndex",
+			onDrop: "&"
 		},
 		transclude: true,
-		require: '^ykBoard',
-		link: function(scope, element, attrs, ykBoard) {
+		link: function(scope, element, attrs) {
 			attrs.$set('draggable', true);
 			element.on('dragover', function(event) {
-				if(ykBoard.dragOrigin.cardIndex == -1 && ykBoard.dragOrigin.laneIndex != scope.laneIndex)
+				if(dragOrigin.cardIndex == -1 && dragOrigin.laneIndex != scope.laneIndex)
 					event.preventDefault();
 			});
 			element.on('drop', function(event) {
-				scope.$apply(function() {
-					ykBoard.moveLane(scope.laneIndex);
-				});
+				scope.$apply(scope.onDrop);
 			});
 			element.on('drag', function(event) {
-				ykBoard.setDragOrigin(scope.laneIndex, -1);
+				dragOrigin.laneIndex = scope.laneIndex;
+				dragOrigin.cardIndex = -1;
 			});
 		},
 	}
-});
+}]);
 
-yaksApp.directive('ykCardDropTarget', [function() {
+yaksApp.directive('ykCardDropTarget', ['dragOrigin', function(dragOrigin) {
 	return {
 		restrict: 'A',
 		scope: {
-			toLaneIndex: "=laneIndex"
+			onDrop: "&"
 		},
 		transclude: true,
-		require: '^ykBoard',
-		link: function(scope, element, attrs, ykBoard) {
+		link: function(scope, element, attrs) {
 			element.on('dragover', function(event) {
-				if(ykBoard.dragOrigin.cardIndex >= 0)
+				if(dragOrigin.cardIndex >= 0){
 					event.preventDefault();
+				}
 			});
 			element.on('drop', function(event) {
-				scope.$apply(function() {
-					ykBoard.moveCard(scope.toLaneIndex);
-				});
+				scope.$apply(scope.onDrop);
 			});
 		}
 	}
 }]);
 
-yaksApp.directive('ykCard', [function(){
+yaksApp.directive('ykCard', ['dragOrigin', function(dragOrigin){
+	console.log('ykCard activating');
 	return {
-		restrict: 'E',
-		templateUrl: 'templates/card-template.html',
-		require: '^ykBoard',
+		restrict: 'A',
 		scope: {
-			card: '=card',
-			cardIndex: '=cardIndex',
-			laneIndex: '=laneIndex'
+			laneIndex: '=laneIndex',
+			cardIndex: '=cardIndex'
 		},
-
-		link: function(scope, element, attrs, ykBoard) {
-			scope.edit = function() {
-				ykBoard.editCard(scope.laneIndex, scope.cardIndex);
-			}
-
+		link: function(scope, element, attrs) {
 			element.on('drag', function(event) {
-				ykBoard.setDragOrigin(scope.laneIndex, scope.cardIndex);
+				dragOrigin.laneIndex = scope.laneIndex;
+				dragOrigin.cardIndex = scope.cardIndex;
 			});
 		}
 	}
@@ -193,35 +183,35 @@ yaksApp.directive('editInPlace', ['Boards', function(Boards) {
 	return {
 			restrict: 'E',
 			scope: {
-				value: "=",
+				value: "=value",
+				label: "@label",
 				onChange: "&"
 			},
-			template: '<span ng-bind="value" title="Double click to edit" ng-dblclick="edit()"></span><input type="text" ng-model="value"></input>',
+			templateUrl: 'templates/edit-in-place.html',
 			link: function($scope, element, attrs) {
 				var spanElement = angular.element(element.children()[0]);
-				var inputElement = angular.element(element.children()[1]);
-				inputElement.css("display", "none");
-				inputElement.css({
-					borderRadius: "15px",
-					height: "30px",
+				var inputContainer = angular.element(element.children()[1]);
+				inputContainer.css("display", "none");
+				inputContainer.css({
 					fontSize: "1.1rem",
 					verticalAlign: "middle",
 					padding: "2px 10px",
 					zIndex: "10"
 				});
 
+				var inputElement = angular.element(inputContainer.children()[1]);
+
 				$scope.edit = function() {
-					inputElement.css("display", "inline-block");
+					inputContainer.css("display", "inline-block");
 					spanElement.css("display", "none");
-					inputElement[0].focus();
+					inputElement.focus();
 				}
 
 				inputElement.on('blur', function(e) {
 					if(inputElement.val().trim() == '') {
-						inputElement.css("border-color", "red");
-						inputElement[0].focus();
+						inputElement.focus();
 					} else {
-						inputElement.css("display", "none");
+						inputContainer.css("display", "none");
 						spanElement.css("display", "inline-block");
 						$scope.onChange();
 					}

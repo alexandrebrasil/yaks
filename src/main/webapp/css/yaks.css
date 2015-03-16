@@ -1,34 +1,29 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
-
-* {
-	margin: 0px;
-	padding: 0px;
-	@include box-sizing(border-box);
-}
-
 html, body {
 	margin: 0px;
 	font-family: 'Open Sans', Arial, sans-serif;
 	font-size: 14px;
-	height: 100%;
+	height: 100vh;
 }
 
-div#logo {
+* {
+	@include box-sizing(border-box);
+}
+
+edit-in-place {
+	height: 35px;
+	display: block;
 	text-align: center;
-	margin-bottom: 10px;
 }
 
-#sideMenu {
-	border-radius: 5px;
-	background-color: #4472B9;
-	color: white;
-	padding: 5px;
-	position: fixed;
-	left: 10px;
-	top: 55px;
-	width: 200px;
-	height: 70vh;
+#boardName {
+	font-size: 2rem;
+	weigth: bold;
 }
+#boardName > span {
+	text-shadow: 3px 3px 8px #222222;
+}
+/*
 
 #sidemenu a,
 #sidemenu a:visited {
@@ -130,10 +125,10 @@ div#boardHeader {
 }
 
 .cardDescription {
-	display: block; /* Fallback for non-webkit */
+	display: block;
   	display: -webkit-box;
   	padding: 5px;
-	height: calc(2rem); /* Fallback for non-webkit */
+	height: calc(2rem);
 	font-size: 0.8rem;
 	line-height: 1rem;
 	-webkit-line-clamp: 2;
@@ -150,9 +145,9 @@ div#boardHeader {
 	color: white;
 	text-shadow: 3px 3px 2px #222222;
 
-	display: block; /* Fallback for non-webkit */
+	display: block;
   	display: -webkit-box;
-	height: calc(1rem + 10px); /* Fallback for non-webkit */
+	height: calc(1rem + 10px);
 	font-size: 1rem;
 	line-height: 2rem;
 	-webkit-line-clamp: 1;
@@ -166,8 +161,8 @@ div#boardHeader {
 	position: absolute;
 	right: 1px;
 	top: 50%;
-	-ms-transform: translate(0px, -50%); /* IE 9 */
-    -webkit-transform: translate(0px, -50%); /* Chrome, Safari, Opera */
+	-ms-transform: translate(0px, -50%);
+    -webkit-transform: translate(0px, -50%);
     transform: translate(0px, -50%);
 }
 
@@ -230,8 +225,8 @@ div#boardHeader {
 	height: 350px;
 	top: 50%;
 	left: 50%;
-	-ms-transform: translate(-50%, -50%); /* IE 9 */
-	-webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+	-ms-transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 }
 
@@ -240,8 +235,8 @@ div#boardHeader {
 	overflow: hidden;
 	top: 100;
 	left: 50%;
-	-ms-transform: translate(-50%, 0%); /* IE 9 */
-	-webkit-transform: translate(-50%, 0%); /* Chrome, Safari, Opera */
+	-ms-transform: translate(-50%, 0%);
+	-webkit-transform: translate(-50%, 0%);
 	transform: translate(-50%, 0%);
 }
 
@@ -274,3 +269,4 @@ input[type="text"] {
 .ng-invalid.ng-touched {
 	box-shadow: 2px 2px 12px red;
 }
+*/
