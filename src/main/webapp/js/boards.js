@@ -1,22 +1,24 @@
 var boardsModule = angular.module('boards', ['ngResource']);
-boardsModule.factory('boards', ['$resource',
-	function($resource) {
-		return $resource('/boards/:boardId', {boardId: '@_id'}, {
+
+
+boardsModule.service('Boards', ['$resource', function($resource) {
+	var boardResource = $resource('/boards/:boardId', {boardId: '@_id'}, {
 			query: {method: 'GET', isArray:true},
 			get: {method: 'GET', isArray: false},
 			save: {method: 'PUT'},
 			add: {method: 'POST'}
 		});
-	}
-]);
 
-boardsModule.service('Boards', ['boards', function(boards) {
-	this.getBoards = function(callback) {
-		return boards.query(callback);
+	this.saveBoard = function(board) {
+		boardResource.save(board);
 	}
-	
+
+	this.getBoards = function(callback) {
+		return boardResource.query(callback);
+	}
+
 	this.addBoard = function(board, callback) {
-		boards.add(board, function(newBoard, responseHeaders) {
+		boardResource.add(board, function(newBoard, responseHeaders) {
 			callback(newBoard);
 		});
 	}
@@ -25,10 +27,6 @@ boardsModule.service('Boards', ['boards', function(boards) {
 		var card = board.lanes[fromLaneIndex].cards.splice(cardIndex, 1)[0];
 		board.lanes[toLaneIndex].cards.push(card);
 		this.saveBoard(board);
-	}
-
-	this.saveBoard = function(board) {
-		boards.save(board);
 	}
 
 	this.addNewLane = function(board, newLaneName) {
