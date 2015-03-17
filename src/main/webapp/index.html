@@ -6,6 +6,7 @@
 		<script src="bower_components/angular-aria/angular-aria.js"></script>
 		<script src="bower_components/angular-material/angular-material.js"></script>
 		<script src="bower_components/angular-resource/angular-resource.js"></script>
+		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 
 		<script type="text/javascript" src="js/yaks.js"></script>
 		<script type="text/javascript" src="js/boards.js"></script>
@@ -38,7 +39,7 @@
 				<div flex layout-fill ng-repeat="lane in selectedBoard.lanes" class="lane" yk-card-drop-target on-drop="moveCard($index)" ng-transclude>
 					<md-card ng-repeat="card in lane.cards" draggable="true" yk-card lane-index="$parent.$index" card-index="$index" ng-dblclick="editCard($event, $parent.$index, $index)">
 						<md-toolbar style="height: 25px; min-height: 35px" class="md-hue-1" layout="row" layout-align="center center">{{card.name}}</md-toolbar>
-						<md-card-content>{{card.description}}</md-card-content>
+						<md-card-content><span ng-bind-html="card.description | lineBreaks"></span></md-card-content>
 					</md-card>
 				</div>
 			</div>

@@ -1,10 +1,16 @@
-var yaksApp = angular.module('yaks',['boards', 'ngMaterial']);
+var yaksApp = angular.module('yaks',['boards', 'ngMaterial', 'ngSanitize']);
 
 yaksApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default')
 		.primaryPalette('indigo')
 		.accentPalette('blue');
 });
+
+yaksApp.filter('lineBreaks', function() {
+	return function(input) {
+		return input.replace(/\n/g, '<br/>');
+	}
+})
 
 yaksApp.value('dragOrigin', {cardIndex: -1, laneIndex: -1});
 
@@ -67,7 +73,6 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog'
 					$mdDialog.hide();
 					card.name = scope.card.name;
 					card.description = scope.card.description;
-					// TODO: save the card on the backend
 				}
 
 				scope.cancel = function() {
