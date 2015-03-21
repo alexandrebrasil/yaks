@@ -47,6 +47,17 @@ module.exports = function(app) {
       }
    })
 
+   app.delete('/boards/:id', function(req, res) {
+      Board.remove({_id: req.params.id}, function(err) {
+         if(err) {
+            console.log("Error deleting board " + req.params.id);
+            res.status(500);
+         } else {
+            res.status(200).end();
+         }
+      })
+   })
+
    app.put('/boards/:id', function(req, res){
       console.log('Saving board ' + req.params.id);
       var board = req.body;

@@ -9,6 +9,11 @@ boardsModule.service('Boards', ['$resource', function($resource) {
 			add: {method: 'POST'}
 		});
 
+	this.deleteBoard = function(board, successCb, errorCb) {
+		console.log(JSON.stringify(board));
+		boardResource.delete({boardId: board._id}, board, successCb, errorCb);
+	}
+
 	this.saveBoard = function(board) {
 		boardResource.save(board);
 	}

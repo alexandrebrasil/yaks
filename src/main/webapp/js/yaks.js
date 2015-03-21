@@ -15,6 +15,15 @@ yaksApp.filter('lineBreaks', function() {
 yaksApp.value('dragOrigin', {cardIndex: -1, laneIndex: -1});
 
 yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog', 'dragOrigin', function($scope, Boards, $window, $mdDialog, dragOrigin) {
+	function refreshBoards() {
+		Boards.getBoards(function(boards){
+			$scope.boards = boards;
+			$scope.selectedBoard = boards[0];
+		});
+	}
+
+	refreshBoards();
+
 	function deleteSelectedCard() {
 		$scope.selectedLane.cards.splice($scope.selectedIndex, 1);
 		Boards.saveBoard($scope.selectedBoard);
@@ -33,15 +42,11 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog'
 			|| $scope.selectedCard.description == null || $scope.selectedCard.description.trim().length == 0) {
 				$window.alert("Please inform the card name and a starting text before proceeding.");
 				return;
-			}
-
-			$scope.selectedCard = null;
-			Boards.saveBoard($scope.selectedBoard);
 		}
 
-		$scope.boards = Boards.getBoards(function(boards){
-		$scope.selectedBoard = boards[0];
-	});
+		$scope.selectedCard = null;
+		Boards.saveBoard($scope.selectedBoard);
+	}
 
 	$scope.createNewBoard = function() {
 		var newBoard = {
@@ -53,6 +58,30 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog'
 			$scope.boards.push(board);
 			$scope.selectedBoard = $scope.boards[$scope.boards.length - 1];
 		})
+	}
+
+	$scope.deleteSelectedBoard = function() {
+		var confirmDlg = $mdDialog.confirm();
+		confirmDlg.title('Delete board')
+					 .content('Are you sure you want to remove the board \'' + $scope.selectedBoard.name + '\' and all of its contents? This can\'t be undone.')
+					 .ariaLabel('Confirm board deletion')
+					 .ok('Yes')
+					 .cancel('No')
+					 .theme('default');
+
+		$mdDialog.show(confirmDlg).then(function() {
+			Boards.deleteBoard($scope.selectedBoard, function(result) {
+				console.log("Callback!");
+				console.log(JSON.stringify(result));
+				refreshBoards();
+			}, function(err) {
+				var alertDlg = $mdDialog.alert();
+				alertDlg.title('Error removing board.')
+				        .content('An unexpected error occurred while removing the board. Please try again.')
+						  .ok('Close');
+				$mdDialog.show(alertDlg);
+			});
+		});
 	}
 
 	$scope.editCard = function(event, laneIndex, cardIndex) {
