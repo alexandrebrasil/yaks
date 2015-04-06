@@ -1,5 +1,7 @@
 <html ng-app="yaks">
 	<head>
+		<script src="//use.typekit.net/ijg8vax.js"></script>
+		<script>try{Typekit.load();}catch(e){}</script>
 		<script src="bower_components/hammerjs/hammer.js"></script>
 		<script src="bower_components/angular/angular.js"></script>
 		<script src="bower_components/angular-animate/angular-animate.js"></script>
@@ -7,7 +9,6 @@
 		<script src="bower_components/angular-material/angular-material.js"></script>
 		<script src="bower_components/angular-resource/angular-resource.js"></script>
 		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-
 		<script type="text/javascript" src="js/yaks.js"></script>
 		<script type="text/javascript" src="js/boards.js"></script>
 
@@ -31,8 +32,9 @@
 				<edit-in-place id="boardName" flex label="Board name" value="selectedBoard.name" on-change="saveBoard()"> </edit-in-place>
 
 				<div layout="row" layout-align="space-around center" flex style="width: 100%">
-					<div flex ng-repeat="lane in selectedBoard.lanes" yk-lane-drag-drop on-drop="moveLane($index)" lane-index="$index" ng-transclude style="display: inline-block">
+					<div flex ng-repeat="lane in selectedBoard.lanes" yk-lane-drag-drop on-drop="moveLane($index)" lane-index="$index" ng-transclude style="display: inline-block; position: relative">
 						<edit-in-place value="lane.name" label="Lane name" on-change="saveBoard()"></edit-in-place>
+						<span ng-click="deleteLane($index)">-</span>
 					</div>
 				</div>
 			</md-toolbar>

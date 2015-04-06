@@ -71,7 +71,6 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog'
 
 		$mdDialog.show(confirmDlg).then(function() {
 			Boards.deleteBoard($scope.selectedBoard, function(result) {
-				console.log("Callback!");
 				console.log(JSON.stringify(result));
 				refreshBoards();
 			}, function(err) {
@@ -141,6 +140,26 @@ yaksApp.controller('MainController', ['$scope', 'Boards', '$window', '$mdDialog'
 
 	$scope.addNewLane = function() {
 		Boards.addNewLane($scope.selectedBoard, '<New lane>');
+	}
+
+	$scope.deleteLane = function(index) {
+		var lane = $scope.selectedBoard.lanes[index],
+		    deleteFunction = function() {
+				$scope.selectedBoard.lanes.splice(index, 1);
+				$scope.saveBoard();
+			 };
+		if(lane.cards.length > 0) {
+			var confirmDlg = $mdDialog.confirm();
+			confirmDlg.title('Delete lane')
+						 .content('Are you sure you want to remove the lane \'' + lane.name + '\' and all of its cards? This can\'t be undone.')
+						 .ariaLabel('Confirm lane deletion')
+						 .ok('Yes')
+						 .cancel('No')
+						 .theme('default');
+			$mdDialog.show(confirmDlg).then(deleteFunction);
+		} else {
+			deleteFunction();
+		}
 	}
 }]);
 

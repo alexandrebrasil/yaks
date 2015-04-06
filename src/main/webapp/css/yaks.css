@@ -1,7 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
 html, body {
 	margin: 0px;
-	font-family: 'Open Sans', Arial, sans-serif;
+	font-family: Open Sans, Arial, sans-serif;
 	font-size: 14px;
 	height: 100vh;
 }
@@ -16,12 +16,27 @@ edit-in-place {
 	text-align: center;
 }
 
+edit-in-place + span {
+	height: 10px;
+	line-height: 10px;
+	vertical-align: middle;
+	font-size: 2em;
+	cursor: pointer;
+	position: absolute;
+	top: 0px;
+	right: 5px;
+}
+
 #boardName {
 	font-size: 2rem;
 	weigth: bold;
 }
 #boardName > span {
 	text-shadow: 3px 3px 8px #222222;
+}
+
+md-toolbar {
+	font-family: museo-slab;
 }
 /*
 
