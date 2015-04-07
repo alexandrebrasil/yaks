@@ -34,7 +34,7 @@
 				<div layout="row" layout-align="space-around center" flex style="width: 100%">
 					<div flex ng-repeat="lane in selectedBoard.lanes" yk-lane-drag-drop on-drop="moveLane($index)" lane-index="$index" ng-transclude style="display: inline-block; position: relative">
 						<edit-in-place value="lane.name" label="Lane name" on-change="saveBoard()"></edit-in-place>
-						<span ng-click="deleteLane($index)">-</span>
+						<span ng-click="deleteLane($index)" title="Delete lane '{{lane.name}}'">-</span>
 					</div>
 				</div>
 			</md-toolbar>
