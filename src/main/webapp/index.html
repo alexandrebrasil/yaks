@@ -22,9 +22,9 @@
 				<select ng-model="selectedBoard" ng-options="board.name for board in boards" class="boardSelect"> </select>
 
 				<md-button class="md-hue-2" ng-click="createNewBoard()" title="Create a new, empty board">New board</md-button>
-				<md-button class="md-hue-2" ng-click="addNewLane()" title="Add a new lane to this board">New lane</md-button>
-				<md-button class="md-hue-2" ng-click="addNewCard()" title="Add a new card to the first lane">New card</md-button>
-				<md-button class="md-warn" ng-click="deleteSelectedBoard()" title="Delete the selected board">Delete board</md-button>
+				<md-button class="md-hue-2" ng-click="addNewLane()" title="Add a new lane to {{selectedBoard.name}}">New lane</md-button>
+				<md-button class="md-hue-2" ng-click="addNewCard()" title="Add a new card to lane {{selectedBoard.lanes[0].name}}">New card</md-button>
+				<md-button class="md-warn" ng-click="deleteSelectedBoard()" title="Delete '{{selectedBoard.name}}' board">Delete board</md-button>
 			</div>
 		</md-toolbar>
 		<md-content flex layout="column">
